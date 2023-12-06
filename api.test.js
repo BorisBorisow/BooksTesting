@@ -34,33 +34,68 @@ describe("Books API", () => {
         });
   });
   
-//   it("should GET a single book", (done) => {
-//     const bookId = 1;
+  it("should GET a single book", (done) => {
+    const bookId = 2;
 
-//     chai.request(server)
-//         .get('/books/${bookId}')
-//         .end((err, res) => {
-//             expect(res).to.have.status(200);
-//             expect(res.body).to.be.a("object");
-//             expect(res.body).to.have.property("id");
-//             expect(res.body).to.have.property("title");
-//             expect(res.body).to.have.property("author");
-//             done();
-//         });
-//      });
+    chai.request(server)
+        .get(`/books/${bookId}`)
+        .end((err, res) => {
+            expect(res).to.have.status(200);
+            expect(res.body).to.be.a("object");
+            expect(res.body).to.have.property("id");
+            expect(res.body).to.have.property("title");
+            expect(res.body).to.have.property("author");
+            done();
+        });
+     });
 
-//   it('should PUT an existing book', (done) => {
-//     const bookId = 1;
-//     const updatedBook =  { id: bookId, title: "Updated Test Book", author: "Updated Test Author" };
-//     chai.request(server)
-//         .put('/books/${bookId}')
-//         .send(updatedBook)
-//         .end((err, res) => {
-//             expect(res).to.have.status(200);
-//             expect(res.body).to.be.a('object');
-//             expect(res.body.title).to.equal('Updated Test Book');
-//             expect(res.body.author).to.equal('Updated Test Author');
-//             done();
-//         });
-//   })
+  it('should PUT an existing book', (done) => {
+    const bookId = 2;
+    const updatedBook =  { id: bookId, title: "Updated Test Book", author: "Updated Test Author" };
+    chai.request(server)
+        .put(`/books/${bookId}`)
+        .send(updatedBook)
+        .end((err, res) => {
+            expect(res).to.have.status(200);
+            expect(res.body).to.be.a('object');
+            expect(res.body.title).to.equal('Updated Test Book');
+            expect(res.body.author).to.equal('Updated Test Author');
+            done();
+        });
+  });
+
+  it('should Delete an existing book', (done) => {
+    const bookId = 2;
+
+    chai.request(server)
+        .delete(`/books/${bookId}`)
+        .end((err, res) => {
+            console.log(res.body); 
+            expect(res).to.have.status(404);
+            expect(res.body).to.be.a('object');
+            done();
+        });
+  });
+
+  it('Should return 404 when trying to Get, Put or Delete a non-existing book', (done) => {
+    chai.request(server)
+      .get(`/book/9999`)
+      .end((err,res) => {
+        expect(res).to.have.status(404);
+      });
+
+    chai.request(server)
+      .put(`/books/9999`)
+      .send({ id: "9999", title: "Non-existing Book", author: "Non-existing Author"})
+      .end((err,res) => {
+        expect(res).to.have.status(404);
+      });
+
+    chai.request(server)
+      .delete(`/books/9999`)
+      .end((err, res) => {
+        expect(res).to.have.status(404);
+        done();
+      })
+  })
 });
